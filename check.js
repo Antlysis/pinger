@@ -1,13 +1,14 @@
 var nodemailer = require('nodemailer'); 
 var fetch = require('node-fetch');
 var outlet = require('./data.js');
-
+var schedule = require('node-schedule');
 
 var count1 = 0;
 var sent1 = false;
 var sent2 = false;
 var sent3 = false;
 var sent4 = false;
+var sent5 = false;
 
 var transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
@@ -33,7 +34,7 @@ function pingSP() {
 		if(!sent1) {
 			var mailOptions = {
                         	from: outlet.email,
-                                to: 'jamesleesukey@gmail.com',
+                                to: 'admin@antlysis.com',
                                 subject: 'SP server is Offline',
                                 text: "Server status sent by Pinger"
                         };
@@ -43,8 +44,8 @@ function pingSP() {
                                 } else {
                                         console.log('Email sent: ' + info.response);
                                 }
-                        });y
-                        sent = true;
+                        });
+                        sent1 = true;
 		}
 
 	})
@@ -56,7 +57,7 @@ function pingSP() {
 			if (sent1) {
 				var mailOptions = {
 					from: outlet.email,
-					to: 'jamesleesukey@gmail.com',
+					to: 'admin@antlysis.com',
 					subject: 'SP server is online',
 					text: "Server status sent by Pinger"
 				};
@@ -67,7 +68,7 @@ function pingSP() {
 						console.log('Email sent: ' + info.response);
 					}
 				});
-				sent = false;
+				sent1 = false;
 			}
 		}
 		//myRefreshToken = response.refreshToken
@@ -88,7 +89,7 @@ function pingPJCC() {
 		if(!sent2) {
                         var mailOptions = {
                                 from: outlet.email,
-                                to: 'jamesleesukey@gmail.com',
+                                to: 'admin@antlysis.com',
                                 subject: 'PJCC server is Offline',
                                 text: "Server status sent by Pinger"
                         };
@@ -99,7 +100,7 @@ function pingPJCC() {
                                         console.log('Email sent: ' + info.response);
                                 }
                         });
-                        sent = true;
+                        sent2 = true;
                 }
 
         })
@@ -111,7 +112,7 @@ function pingPJCC() {
                 	if (sent2) {
                                 var mailOptions = {
                                         from: outlet.email,
-                                        to: 'jamesleesukey@gmail.com',
+                                        to: 'admin@antlysis.com',
                                         subject: 'PJCC server is online',
                                         text: "Server status sent by Pinger"
                                 };
@@ -122,7 +123,7 @@ function pingPJCC() {
                                                 console.log('Email sent: ' + info.response);
                                         }
                                 });
-                                sent = false;
+                                sent2 = false;
                         }
 
 		}
@@ -144,7 +145,7 @@ function pingPJ21() {
 		 if(!sent3) {
                         var mailOptions = {
                                 from: outlet.email,
-                                to: 'jamesleesukey@gmail.com',
+                                to: 'admin@antlysis.com',
                                 subject: 'PJ21 server is Offline',
                                 text: "Server status sent by Pinger"
                         };
@@ -155,7 +156,7 @@ function pingPJ21() {
                                         console.log('Email sent: ' + info.response);
                                 }
                         });
-                        sent = true;
+                        sent3 = true;
                 }
 
         })
@@ -167,7 +168,7 @@ function pingPJ21() {
                 	if (sent3) {
                                 var mailOptions = {
                                         from: outlet.email,
-                                        to: 'jamesleesukey@gmail.com',
+                                        to: 'admin@antlysis.com',
                                         subject: 'PJ21 server is online',
                                         text: "Server status sent by Pinger"
                                 };
@@ -178,7 +179,7 @@ function pingPJ21() {
                                                 console.log('Email sent: ' + info.response);
                                         }
                                 });
-                                sent = false;
+                                sent3 = false;
                         }
 
 		}
@@ -199,7 +200,7 @@ function pingBBB() {
 		if(!sent4) {
                         var mailOptions = {
                                 from: outlet.email,
-                                to: 'jamesleesukey@gmail.com',
+                                to: 'admin@antlysis.com',
                                 subject: 'BBB server is Offline',
                                 text: "Server status sent by Pinger"
                         };
@@ -210,7 +211,7 @@ function pingBBB() {
                                         console.log('Email sent: ' + info.response);
                                 }
                         });
-                        sent = true;
+                        sent4 = true;
                 }
         })
         .then(response => {
@@ -221,7 +222,7 @@ function pingBBB() {
                 	if (sent4) {
                                 var mailOptions = {
                                         from: outlet.email,
-                                        to: 'jamesleesukey@gmail.com',
+                                        to: 'admin@antlysis.com',
                                         subject: 'BBB server is online',
                                         text: "Server status sent by Pinger"
                                 };
@@ -232,7 +233,7 @@ function pingBBB() {
                                                 console.log('Email sent: ' + info.response);
                                         }
                                 });
-                                sent = false;
+                                sent4 = false;
                         }
 		}
                 //myRefreshToken = response.refreshToken
@@ -241,7 +242,7 @@ function pingBBB() {
 
 function pingTest() {
         var data = {"Online": "Yes"};
-        fetch('https://https://overshot-wolf-2024.dataplicity.io/pingme',
+        fetch('https://overshot-wolf-2024.dataplicity.io/pingme',
                 {headers: {'Content-Type': 'application/json'},
                 method:'POST',
                 body:JSON.stringify(data)
@@ -249,10 +250,10 @@ function pingTest() {
         .catch(error => {
                 console.error('Error:', error)
                 console.log("Test Server is Offline")
-                if(!sent4) {
+                if(!sent5) {
                         var mailOptions = {
                                 from: outlet.email,
-                                to: 'jamesleesukey@gmail.com',
+                                to: 'admin@antlysis.com',
                                 subject: 'Test server is Offline',
                                 text: "Server status sent by Pinger"
                         };
@@ -263,7 +264,7 @@ function pingTest() {
                                         console.log('Email sent: ' + info.response);
                                 }
                         });
-                        sent = true;
+                        sent5 = true;
                 }
         })
         .then(response => {
@@ -271,10 +272,10 @@ function pingTest() {
                 var status = response.status
                 if (status == "Online") {
                         console.log("Test Server is online")
-                        if (sent4) {
+                        if (sent5) {
                                 var mailOptions = {
                                         from: outlet.email,
-                                        to: 'jamesleesukey@gmail.com',
+                                        to: 'admin@antlysis.com',
                                         subject: 'Test server is online',
                                         text: "Server status sent by Pinger"
                                 };
@@ -285,12 +286,28 @@ function pingTest() {
                                                 console.log('Email sent: ' + info.response);
                                         }
                                 });
-                                sent = false;
+                                sent5 = false;
                         }
                 }
                 //myRefreshToken = response.refreshToken
         })
 }
+
+schedule.scheduleJob('00 00 00 * * *', function(){
+	var mailOptions = {
+        	from: outlet.email,
+        	to: 'admin@antlysis.com',
+        	subject: 'Pinger server is online',
+        	text: "Pinger is still working hard to monitor our servers."
+        };
+        transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                        console.log(error);
+                } else {
+                        console.log('Email sent: ' + info.response);
+                }
+        });
+})
 
 
 
@@ -299,5 +316,5 @@ setInterval(function() {
 	pingPJCC();
 	pingPJ21();
 	pingBBB();
-	pingTest();
-}, 600000)
+	//pingTest();
+}, 300000)
