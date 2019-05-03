@@ -155,7 +155,27 @@ function pingPJCC() {
                                 });
                                 sent2 = false;
                         }
-
+			count2 = 0
+                } else {
+                        count2++;
+                        if (count2 == 4) {
+                                if(!sent2) {
+                                        var mailOptions = {
+                                                from: outlet.email,
+                                                to: 'admin@antlysis.com',
+                                                subject: 'PJCC server is Offline',
+                                                text: "Server status sent by Pinger"
+                                        };
+                                        transporter.sendMail(mailOptions, function(error, info){
+                                                if (error) {
+                                                        console.log(error);
+                                                } else {
+                                                        console.log('Email sent: ' + info.response);
+                                                }
+                                        });
+                                        sent2 = true;
+                                }
+                        }
                 }
                 //myRefreshToken = response.refreshToken
         })
@@ -210,7 +230,27 @@ function pingPJ21() {
                                 });
                                 sent3 = false;
                         }
-
+			count3 = 0
+                } else {
+                        count3++;
+                        if (count3 == 4) {
+                                if(!sent3) {
+                                        var mailOptions = {
+                                                from: outlet.email,
+                                                to: 'admin@antlysis.com',
+                                                subject: 'PJ21 server is Offline',
+                                                text: "Server status sent by Pinger"
+                                        };
+                                        transporter.sendMail(mailOptions, function(error, info){
+                                                if (error) {
+                                                        console.log(error);
+                                                } else {
+                                                        console.log('Email sent: ' + info.response);
+                                                }
+                                        });
+                                        sent3 = true;
+                                }
+                        }
                 }
                 //myRefreshToken = response.refreshToken
         })
@@ -263,6 +303,27 @@ function pingBBB() {
                                         }
                                 });
                                 sent4 = false;
+                        }
+			count4
+                } else {
+                        count4++;
+                        if (count4 == 4) {
+                                if(!sent4) {
+                                        var mailOptions = {
+                                                from: outlet.email,
+                                                to: 'admin@antlysis.com',
+                                                subject: 'BBB server is Offline',
+                                                text: "Server status sent by Pinger"
+                                        };
+                                        transporter.sendMail(mailOptions, function(error, info){
+                                                if (error) {
+                                                        console.log(error);
+                                                } else {
+                                                        console.log('Email sent: ' + info.response);
+                                                }
+                                        });
+                                        sent4 = true;
+                                }
                         }
                 }
                 //myRefreshToken = response.refreshToken
@@ -318,7 +379,28 @@ function pingddns() {
                                 });
                                 sent8 = false;
                         }
-                                                                                                                                                                                                    	}
+			count8 = 0
+		} else {
+                        count8++;
+                        if (count8 == 4) {
+                                if(!sent8) {
+                                        var mailOptions = {
+                                                from: outlet.email,
+                                                to: 'admin@antlysis.com',
+                                                subject: 'DDNS server is Offline',
+                                                text: "Server status sent by Pinger"
+                                        };
+                                        transporter.sendMail(mailOptions, function(error, info){
+                                                if (error) {
+                                                        console.log(error);
+                                                } else {
+                                                        console.log('Email sent: ' + info.response);
+                                                }
+                                        });
+                                        sent8 = true;
+                                }
+                        }
+                }
 	})
 }
 
