@@ -10,17 +10,26 @@ var schedule = require('node-schedule');
 
 var count1 = 0;
 var sent1 = false;
-var count1 = 0;
-var sent2 = false;
-var count2 = 0;
-var sent3 = false;
-var count3 = 0;
-var sent4 = false;
-var count4 = 0;
-var sent5 = false;
-var count5 = 0;
-var sent8 = false;
-var count8 = 0;
+var SPcheck = {};
+SPcheck.count = 0;
+SPcheck.sent = false;
+var PJCCcheck = {};
+PJCCcheck.count = 0;
+PJCCcheck.sent = false;
+var PJ21check = {};
+PJ21check.count = 0;
+PJ21check.sent = false;
+var BBBcheck = {};
+BBBcheck.count = 0;
+BBBcheck.sent = false;
+var DDNScheck = {};
+DDNScheck.count = 0;
+DDNScheck.sent = false;
+const SPAddr = 'https://aortic-sheep-0060.dataplicity.io/pingme';
+const PJCCAddr = 'https://underfired-ibis-3986.dataplicity.io/pingme';
+const PJ21Addr = 'https://membranous-molly-7085.dataplicity.io/pingme';
+const BBBAddr = 'https://coronate-pademelon-4727.dataplicity.io/pingme';
+const DDNSAddr = 'http://antlysis.ddns.net:333/pingme';
 var transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
     port: 465,
@@ -31,384 +40,86 @@ var transporter = nodemailer.createTransport({
         }
 });
 
-function pingSP() {
-        var data = {"Online": "Yes"};
-        fetch('https://aortic-sheep-0060.dataplicity.io/pingme',
-                {headers: {'Content-Type': 'application/json'},
-                method:'POST',
-                body:JSON.stringify(data)
-        }).then(res => res.text())
-        .catch(error => {
-                console.error('Error:', error)
-                console.log("SP Server is Offline")
-                if(!sent1) {
-                        var mailOptions = {
-                                from: outlet.email,
-                                to: 'admin@antlysis.com',
-                                subject: 'SP server is Offline',
-                                text: "Server status sent by Pinger"
-                        };
-                        transporter.sendMail(mailOptions, function(error, info){
-                                if (error) {
-                                        console.log(error);
-                                } else {
-                                        console.log('Email sent: ' + info.response);
-                                }
-                        });
-                        sent1 = true;
-                }
-
-        })
-        .then(response => {
-                //console.log('Success:', response)
-                if(response) {
-			try {
-        			//console.log("checked")
-				var status = JSON.parse(response).status;
-				//console.log(status)
-				if (status == "Online") {
-                        		console.log("SP Server is online")
-                        		if (sent1) {
-                        		        var mailOptions = {
-                        		                from: outlet.email,
-                        		                to: 'admin@antlysis.com',
-                        		                subject: 'SP server is online',
-                        		                text: "Server status sent by Pinger"
-                        		        };
-                        		        transporter.sendMail(mailOptions, function(error, info){
-                        		                if (error) {
-                        		                        console.log(error);
-                        		                } else {
-                        		                        console.log('Email sent: ' + info.response);
-                        		                }
-                        		        });
-                        		        sent1 = false;
-                        		}
-                        	count1 = 0;
-				}
-    			}
-			catch (e) {
-        			console.error(e); // error in the above string (in this case, yes)!
-                        	if (count1 <= 2) {
-                        	        if(!sent1) {
-                        	                var mailOptions = {
-                        	                        from: outlet.email,
-                        	                        to: 'admin@antlysis.com',
-                        	                        subject: 'SP server is Offline',
-                        	                        text: "Server status sent by Pinger"
-                        	                };
-                        	                transporter.sendMail(mailOptions, function(error, info){
-                        	                        if (error) {
-                        	                                console.log(error);
-                        	                        } else {
-                        	                                console.log('Email sent: ' + info.response);
-                        	                        }
-                        	                });
-                        	                sent1 = true;
-                        	        }
-					count1++
-                        	}
-		     }
-		}
-        })
-}
-
-function pingPJCC() {
-        var data = {"Online": "Yes"};
-        fetch('https://underfired-ibis-3986.dataplicity.io/pingme',
-                {headers: {'Content-Type': 'application/json'},
-                method:'POST',
-                body:JSON.stringify(data)
-        }).then(res => res.text())
-        .catch(error => {
-                console.error('Error:', error)
-                console.log("PJCC Server is Offline")
-                if(!sent2) {
-                        var mailOptions = {
-                                from: outlet.email,
-                                to: 'admin@antlysis.com',
-                                subject: 'PJCC server is Offline',
-                                text: "Server status sent by Pinger"
-                        };
-                        transporter.sendMail(mailOptions, function(error, info){
-                                if (error) {
-                                        console.log(error);
-                                } else {
-                                        console.log('Email sent: ' + info.response);
-                                }
-                        });
-                        sent2 = true;
-                }
-
-        })
-        .then(response => {
-                console.log('Success:', response)
-                var status = JSON.parse(response).status
-                if (status == "Online") {
-                        console.log("PJCC Server is online")
-                        if (sent2) {
-                                var mailOptions = {
-                                        from: outlet.email,
-                                        to: 'admin@antlysis.com',
-                                        subject: 'PJCC server is online',
-                                        text: "Server status sent by Pinger"
-                                };
-                                transporter.sendMail(mailOptions, function(error, info){
-                                        if (error) {
-                                                console.log(error);
-                                        } else {
-                                                console.log('Email sent: ' + info.response);
-                                        }
-                                });
-                                sent2 = false;
-                        }
-			count2 = 0
+function pingMe(addr, outletCheck, name) {
+    var data = {"Online": "Yes"};
+    fetch(addr,
+        {headers: {'Content-Type': 'application/json'},
+        method:'POST',
+        body:JSON.stringify(data)
+    }).then(res => res.text())
+    .catch(error => {
+        console.error('Error:', error)
+        console.log(name+" Server is Offline")
+        if(!outletCheck.sent) {
+            var mailOptions = {
+                from: outlet.email,
+                to: 'admin@antlysis.com',
+                subject: name + ' server is Offline',
+                text: "Server status sent by Pinger"
+            };
+            transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                        console.log(error);
                 } else {
-                        count2++;
-                        if (count2 == 4) {
-                                if(!sent2) {
-                                        var mailOptions = {
-                                                from: outlet.email,
-                                                to: 'admin@antlysis.com',
-                                                subject: 'PJCC server is Offline',
-                                                text: "Server status sent by Pinger"
-                                        };
-                                        transporter.sendMail(mailOptions, function(error, info){
-                                                if (error) {
-                                                        console.log(error);
-                                                } else {
-                                                        console.log('Email sent: ' + info.response);
-                                                }
-                                        });
-                                        sent2 = true;
-                                }
-                        }
+                        console.log('Email sent: ' + info.response);
                 }
-                //myRefreshToken = response.refreshToken
-        })
-}
+            });
+            outletCheck.sent = true;
+        }
 
-function pingPJ21() {
-        var data = {"Online": "Yes"};
-        fetch('https://membranous-molly-7085.dataplicity.io/pingme',
-                {headers: {'Content-Type': 'application/json'},
-                method:'POST',
-                body:JSON.stringify(data)
-        }).then(res => res.text())
-        .catch(error => {
-                console.error('Error:', error)
-                console.log("PJ21 Server is Offline")
-                 if(!sent3) {
-                        var mailOptions = {
-                                from: outlet.email,
-                                to: 'admin@antlysis.com',
-                                subject: 'PJ21 server is Offline',
-                                text: "Server status sent by Pinger"
-                        };
-                        transporter.sendMail(mailOptions, function(error, info){
-                                if (error) {
-                                        console.log(error);
-                                } else {
-                                        console.log('Email sent: ' + info.response);
-                                }
-                        });
-                        sent3 = true;
-                }
-
-        })
-        .then(response => {
-                console.log('Success:', response)
-                var status = JSON.parse(response).status
-                if (status == "Online") {
-                        console.log("PJ21 Server is online")
-                        if (sent3) {
-                                var mailOptions = {
-                                        from: outlet.email,
-                                        to: 'admin@antlysis.com',
-                                        subject: 'PJ21 server is online',
-                                        text: "Server status sent by Pinger"
-                                };
-                                transporter.sendMail(mailOptions, function(error, info){
-                                        if (error) {
-                                                console.log(error);
-                                        } else {
-                                                console.log('Email sent: ' + info.response);
-                                        }
-                                });
-                                sent3 = false;
-                        }
-			count3 = 0
-                } else {
-                        count3++;
-                        if (count3 == 4) {
-                                if(!sent3) {
-                                        var mailOptions = {
-                                                from: outlet.email,
-                                                to: 'admin@antlysis.com',
-                                                subject: 'PJ21 server is Offline',
-                                                text: "Server status sent by Pinger"
-                                        };
-                                        transporter.sendMail(mailOptions, function(error, info){
-                                                if (error) {
-                                                        console.log(error);
-                                                } else {
-                                                        console.log('Email sent: ' + info.response);
-                                                }
-                                        });
-                                        sent3 = true;
-                                }
-                        }
-                }
-                //myRefreshToken = response.refreshToken
-        })
-}
-
-function pingBBB() {
-        var data = {"Online": "Yes"};
-        fetch('https://coronate-pademelon-4727.dataplicity.io/pingme',
-                {headers: {'Content-Type': 'application/json'},
-                method:'POST',
-                body:JSON.stringify(data)
-        }).then(res => res.text())
-        .catch(error => {
-                console.error('Error:', error)
-                console.log("BBB Server is Offline")
-                if(!sent4) {
-                        var mailOptions = {
-                                from: outlet.email,
-                                to: 'admin@antlysis.com',
-                                subject: 'BBB server is Offline',
-                                text: "Server status sent by Pinger"
-                        };
-                        transporter.sendMail(mailOptions, function(error, info){
-                                if (error) {
-                                        console.log(error);
-                                } else {
-                                        console.log('Email sent: ' + info.response);
-                                }
-                        });
-                        sent4 = true;
-                }
-        })
-        .then(response => {
-                console.log('Success:', response)
-                var status = JSON.parse(response).status
-                if (status == "Online") {
-                        console.log("BBB Server is online")
-                        if (sent4) {
-                                var mailOptions = {
-                                        from: outlet.email,
-                                        to: 'admin@antlysis.com',
-                                        subject: 'BBB server is online',
-                                        text: "Server status sent by Pinger"
-                                };
-                                transporter.sendMail(mailOptions, function(error, info){
-                                        if (error) {
-                                                console.log(error);
-                                        } else {
-                                                console.log('Email sent: ' + info.response);
-                                        }
-                                });
-                                sent4 = false;
-                        }
-			count4
-                } else {
-                        count4++;
-                        if (count4 == 4) {
-                                if(!sent4) {
-                                        var mailOptions = {
-                                                from: outlet.email,
-                                                to: 'admin@antlysis.com',
-                                                subject: 'BBB server is Offline',
-                                                text: "Server status sent by Pinger"
-                                        };
-                                        transporter.sendMail(mailOptions, function(error, info){
-                                                if (error) {
-                                                        console.log(error);
-                                                } else {
-                                                        console.log('Email sent: ' + info.response);
-                                                }
-                                        });
-                                        sent4 = true;
-                                }
-                        }
-                }
-                //myRefreshToken = response.refreshToken
-        })
-}
-
-function pingddns() {
-        var data = {"Online": "Yes"};
-        fetch('http://antlysis.ddns.net:333/pingme',
-                {headers: {'Content-Type': 'application/json'},
-                method:'POST',
-                body:JSON.stringify(data)
-        }).then(res => res.text())
-        .catch(error => {
-                console.error('Error:', error)
-                console.log("DDNS Server is Offline")
-                if(!sent8) {
-                        var mailOptions = {
-                                from: outlet.email,
-                                to: 'admin@antlysis.com',
-                                subject: 'DDNS server is Offline',
-                                text: "Server status sent by Pinger"
-                        };
-                        transporter.sendMail(mailOptions, function(error, info){
-                                if (error) {
-                                        console.log(error);
-                                } else {
-                                        console.log('Email sent: ' + info.response);
-                                }
-                        });
-                        sent8 = true;
-                }
-
-        })
-        .then(response => {
-                //console.log('Success:', response)
-                var status = JSON.parse(response).status
-                if (status == "Online") {
-                        console.log("DDNS Server is online")
-                        if (sent8) {
-                                var mailOptions = {
-                                        from: outlet.email,
-                                        to: 'admin@antlysis.com',
-                                        subject: 'DDNS server is online',
-                                        text: "Server status sent by Pinger"
-                                };
-                                transporter.sendMail(mailOptions, function(error, info){
-                                        if (error) {
-                                                console.log(error);
-                                        } else {
-                                                console.log('Email sent: ' + info.response);
-                                        }
-                                });
-                                sent8 = false;
-                        }
-			count8 = 0
-		} else {
-                        count8++;
-                        if (count8 == 4) {
-                                if(!sent8) {
-                                        var mailOptions = {
-                                                from: outlet.email,
-                                                to: 'admin@antlysis.com',
-                                                subject: 'DDNS server is Offline',
-                                                text: "Server status sent by Pinger"
-                                        };
-                                        transporter.sendMail(mailOptions, function(error, info){
-                                                if (error) {
-                                                        console.log(error);
-                                                } else {
-                                                        console.log('Email sent: ' + info.response);
-                                                }
-                                        });
-                                        sent8 = true;
-                                }
-                        }
-                }
-	})
+    })
+    .then(response => {
+            //console.log('Success:', response)
+        if(response) {
+        	try {
+        		//console.log("checked")
+        		var status = JSON.parse(response).status;
+        		//console.log(status)
+        		if (status == "Online") {
+            		console.log(name+" Server is online")
+            		if (outletCheck.sent) {
+        		        var mailOptions = {
+        	                from: outlet.email,
+        	                to: 'admin@antlysis.com',
+        	                subject: 'SP server is online',
+        	                text: "Server status sent by Pinger"
+        		        };
+        		        transporter.sendMail(mailOptions, function(error, info){
+        	                if (error) {
+        	                        console.log(error);
+        	                } else {
+        	                        console.log('Email sent: ' + info.response);
+        	                }
+        		        });
+                        outletCheck.sent = false;
+            		}
+                    outletCheck.count = 0;
+        		}
+        	}
+        	catch (e) {
+    			console.error(e); // error in the above string (in this case, yes)!
+            	if (outletCheck.count <= 2) {
+        	        if(!outletCheck.sent) {
+    	                var mailOptions = {
+	                        from: outlet.email,
+	                        to: 'admin@antlysis.com',
+	                        subject: name+' server is Offline',
+	                        text: "Server status sent by Pinger"
+    	                };
+    	                transporter.sendMail(mailOptions, function(error, info){
+	                        if (error) {
+	                                console.log(error);
+	                        } else {
+	                                console.log('Email sent: ' + info.response);
+	                        }
+    	                });
+    	                outletCheck.sent = true;
+        	        }
+                    outletCheck.count++
+            	}
+            }	   
+	    }
+    })
 }
 
 schedule.scheduleJob('00 00 00 * * *', function(){
@@ -427,17 +138,13 @@ schedule.scheduleJob('00 00 00 * * *', function(){
         });
 })
 
-
-
 setInterval(function() {
-        pingSP();
- //       pingPJCC();
-   //     pingPJ21();
-    //    pingBBB();
-//	pingddns();
-        //pingTest();
+    pingMe(SPAddr, SPcheck, "SP");
+    pingMe(PJCCAddr, PJCCcheck, "PJCC");
+    pingMe(PJ21Addr, PJ21check, "PJ21");
+    pingMe(BBBAddr, BBBcheck, "BBB");
+    pingMe(DDNSAddr, DDNScheck, "DDNS");
 }, 10000)
-
 
 // This responds with "Hello World" on the homepage
 app.get('/', function (req, res) {
