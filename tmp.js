@@ -60,49 +60,56 @@ function pingSP() {
 
         })
         .then(response => {
-                console.log('Success:', response)
-                var status = JSON.parse(response).status
-                if (status == "Online") {
-                        console.log("SP Server is online")
-                        if (sent1) {
-                                var mailOptions = {
-                                        from: outlet.email,
-                                        to: 'admin@antlysis.com',
-                                        subject: 'SP server is online',
-                                        text: "Server status sent by Pinger"
-                                };
-                                transporter.sendMail(mailOptions, function(error, info){
-                                        if (error) {
-                                                console.log(error);
-                                        } else {
-                                                console.log('Email sent: ' + info.response);
-                                        }
-                                });
-                                sent1 = false;
-                        }
-			count1 = 0;
-                } else {
-			count1++;
-			if (count1 == 4) {
-				if(!sent1) {
-                        		var mailOptions = {
-                                		from: outlet.email,
-                               			to: 'admin@antlysis.com',
-                                		subject: 'SP server is Offline',
-                                		text: "Server status sent by Pinger"
-                        		};
-                        		transporter.sendMail(mailOptions, function(error, info){
-                                		if (error) {
-                                		        console.log(error);
-                                		} else {
-                                		        console.log('Email sent: ' + info.response);
-                                		}
-                        		});
-                        		sent1 = true;
-                		}
-			}
+                //console.log('Success:', response)
+                if(response) {
+			try {
+        			//console.log("checked")
+				var status = JSON.parse(response).status;
+				//console.log(status)
+				if (status == "Online") {
+                        		console.log("SP Server is online")
+                        		if (sent1) {
+                        		        var mailOptions = {
+                        		                from: outlet.email,
+                        		                to: 'admin@antlysis.com',
+                        		                subject: 'SP server is online',
+                        		                text: "Server status sent by Pinger"
+                        		        };
+                        		        transporter.sendMail(mailOptions, function(error, info){
+                        		                if (error) {
+                        		                        console.log(error);
+                        		                } else {
+                        		                        console.log('Email sent: ' + info.response);
+                        		                }
+                        		        });
+                        		        sent1 = false;
+                        		}
+                        	count1 = 0;
+				}
+    			}
+			catch (e) {
+        			console.error(e); // error in the above string (in this case, yes)!
+                        	if (count1 <= 2) {
+                        	        if(!sent1) {
+                        	                var mailOptions = {
+                        	                        from: outlet.email,
+                        	                        to: 'admin@antlysis.com',
+                        	                        subject: 'SP server is Offline',
+                        	                        text: "Server status sent by Pinger"
+                        	                };
+                        	                transporter.sendMail(mailOptions, function(error, info){
+                        	                        if (error) {
+                        	                                console.log(error);
+                        	                        } else {
+                        	                                console.log('Email sent: ' + info.response);
+                        	                        }
+                        	                });
+                        	                sent1 = true;
+                        	        }
+					count1++
+                        	}
+		     }
 		}
-                //myRefreshToken = response.refreshToken
         })
 }
 
@@ -424,12 +431,12 @@ schedule.scheduleJob('00 00 00 * * *', function(){
 
 setInterval(function() {
         pingSP();
-        pingPJCC();
-        pingPJ21();
-        pingBBB();
-	pingddns();
+ //       pingPJCC();
+   //     pingPJ21();
+    //    pingBBB();
+//	pingddns();
         //pingTest();
-}, 120000)
+}, 10000)
 
 
 // This responds with "Hello World" on the homepage
